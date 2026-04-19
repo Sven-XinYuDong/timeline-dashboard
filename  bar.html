@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body{
+  margin:0;
+  background:#f5f6f8;
+  font-family:sans-serif;
+  display:flex;
+  justify-content:center;
+  padding:30px;
+  color:#111;
+}
+
+.card{
+  width:420px;
+  background:white;
+  border-radius:18px;
+  padding:20px 20px 24px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.08);
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.title{
+  font-size:18px;
+  font-weight:600;
+}
+
+/* 圆环 */
+.circle-wrap{
+  position:relative;
+  width:90px;
+  height:90px;
+}
+
+svg{
+  width:90px;
+  height:90px;
+  transform:rotate(-90deg);
+}
+
+circle{
+  fill:none;
+  stroke-width:8;
+  cx:45;
+  cy:45;
+  r:36;
+}
+
+.bg{
+  stroke:#e5e7eb;
+}
+
+.progress{
+  stroke:#22c55e;
+  stroke-linecap:round;
+  stroke-dasharray:226;
+  stroke-dashoffset:226;
+  transition:stroke-dashoffset 0.3s linear;
+}
+
+/* 百分比 */
+.percent{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:14px;
+  font-weight:600;
+}
+
+/* dots */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap:3px;
+  margin-top:18px;
+}
+
+.dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#e5e7eb;
+}
+
+.dot.active{
+  background:#22c55e;
+}
+
+.dot.future{
+  background:#d1d5db;
+  opacity:0.4;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <div class="header">
+    <div class="title">Satelite Canadian</div>
+
+    <div class="circle-wrap">
+      <svg viewBox="0 0 90 90">
+        <!-- 背景 -->
+        <circle class="bg" cx="45" cy="45" r="36"></circle>
+
+        <!-- 进度 -->
+        <circle class="progress" id="circle" cx="45" cy="45" r="36"></circle>
+      </svg>
+
+      <div class="percent" id="percent">0%</div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+</div>
+
+<script>
+const start = new Date("2024-12-26");
+const end = new Date("2026-12-26");
+const now = new Date();
+
+// ===== circle =====
+const circle = document.getElementById("circle");
+const percentText = document.getElementById("percent");
+
+const total = end - start;
+let progress = (now - start) / total;
+progress = Math.max(0, Math.min(1, progress));
+
+const radius = 36;
+const circumference = 2 * Math.PI * radius;
+
+circle.style.strokeDasharray = circumference;
+circle.style.strokeDashoffset = circumference * (1 - progress);
+
+percentText.innerText = (progress * 100).toFixed(1) + "%";
+
+// ===== dots =====
+const grid = document.getElementById("grid");
+
+const days = 365 * 2;
+const todayIndex = Math.floor(progress * days);
+
+for(let i=0;i<days;i++){
+  const d = document.createElement("div");
+  d.classList.add("dot");
+
+  if(i <= todayIndex){
+    d.classList.add("active");
+  } else {
+    d.classList.add("future");
+  }
+
+  grid.appendChild(d);
+}
+</script>
+
+</body>
+</html>
